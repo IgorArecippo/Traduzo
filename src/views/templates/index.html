@@ -17,8 +17,12 @@
         <ul class="controls">
           <li class="row from">
             <select name="translate-from">
-              {% for language in languages %}
-                <option value="{{ language.acronym }}" {% if translate_from == language.acronym %}selected{% endif %}>{{ language.name|upper }}</option>
+               {% for language in languages %}
+              {% if language.acronym == translate_from %}
+              <option value="{{ language.acronym }}" selected>{{ language.name|upper }}</option>
+              {% else %}
+              <option value="{{ language.acronym }}">{{ language.name|upper }}</option>
+              {% endif %}
               {% endfor %}
             </select>
           </li>
@@ -28,7 +32,11 @@
           <li class="row to">
             <select name="translate-to">
               {% for language in languages %}
-                <option value="{{ language.acronym }}" {% if translate_to == language.acronym %}selected{% endif %}>{{ language.name|upper }}</option>
+              {% if language.acronym == translate_to %}
+              <option value="{{ language.acronym }}" selected>{{ language.name|upper }}</option>
+              {% else %}
+              <option value="{{ language.acronym }}">{{ language.name|upper }}</option>
+              {% endif %}
               {% endfor %}
             </select>
           </li>

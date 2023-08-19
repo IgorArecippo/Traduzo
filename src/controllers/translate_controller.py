@@ -12,19 +12,30 @@ translate_controller = Blueprint("translate_controller", __name__)
 def index():
     languages = LanguageModel.list_dicts()
 
-    text_to_translate = request.form.get("text-to-translate") or ""
-    translate_from = request.form.get("translate-from") or "pt"
-    translate_to = request.form.get("translate-to") or "en"
-    print(translate_to)
-    translator_google = GoogleTranslator(
-        source="auto", target=translate_to
-    ).translate(text_to_translate)
-    translated = translator_google or ""
+    if request.method == "GET":
+        return render_template(
+            "index.html",
+            languages=LanguageModel.list_dicts(),
+            to_translate=request.form.get("text-to-ranslate")
+            or "O que deseja traduzir",
+            translate_from=request.form.get("translate-from") or "pt",
+            translate_to=request.form.get("translate-to") or "en",
+            translated="Tradução",
+        )
+
+    if request.method == "POST":
+        languages = (LanguageModel.list_dicts(),)
+        to_translate = request.form["text-to-translate"]
+        translate_from = request.form["translate-from"]
+        translate_to = request.form["translate-to"]
+        translated = GoogleTranslator(
+            source=translate_from, target=translate_to
+        ).translate(to_translate)
 
     return render_template(
         "index.html",
         languages=languages,
-        text_to_translate=text_to_translate,
+        text_to_translate=to_translate,
         translate_from=translate_from,
         translate_to=translate_to,
         translated=translated,
@@ -34,4 +45,19 @@ def index():
 # Req. 6
 @translate_controller.route("/reverse", methods=["POST"])
 def reverse():
-    raise NotImplementedError
+    languages = LanguageModel.list_dicts()
+    translate_from = request.form.get("translate-to")
+    translate_to = request.form.get("translate-from")
+    translated = request.form.get("text-to-translate")
+    translator_google = GoogleTranslator(
+        source="auto", target=translate_from
+    ).translate(translated)
+    text_to_translate = translator_google or ""
+    return render_template(
+        "index.html",
+        languages=languages,
+        text_to_translate=text_to_translate,
+        translate_from=translate_from,
+        translate_to=translate_to,
+        translated=translated,
+    )
